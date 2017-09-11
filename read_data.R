@@ -1,16 +1,7 @@
 library(dplyr)
+library(readxl)
+library(reshape2)
 
-raw_dat <- readLines("data/raw_CV1.txt")
-
-gsub(x = raw_dat, pattern = '\\"', replacement = "",) %>% 
-  strsplit(split = ",") %>% 
-  do.call(rbind, .)
-
-strsplit(raw_dat[-1], ',"') %>% 
-  lapply(gsub, pattern = '\\"', replacement = "") %>% 
-  lapply(function(i) unlist(strsplit(i, "[:digit:],"))) 
-
-
-  lapply(gsub, pattern = "7Â", replacement = "37Â") 
-
-
+dat_vs <- read_xlsx("/home/michal/Dropbox/BTU/staż_BTU/Wyniki_excel/11-09-17 VS-MB.xlsx") %>% 
+  melt(variable.name = "replicate") %>% 
+  mutate(replicate = factor(replicate, levels = rev(levels(replicate))))
