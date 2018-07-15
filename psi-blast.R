@@ -1,4 +1,6 @@
 library(dplyr)
+library(rentrez)
+library(XML)
 
 if(Sys.info()[["nodename"]] == "amyloid")
   seq_path <- "/home/michal/Dropbox/artykuły/PSI-blast/Bacteria (taxid:2)/csgA/iteracja_5"
@@ -28,3 +30,12 @@ all_points <- lapply(1L:nrow(description_points), function(ith_description_name_
   do.call(cbind, .) %>% 
   rowSums() %>% 
   sort(decreasing = TRUE)
+
+single_term <- "WP_010429577.1"
+
+#grep("WP_010429577.1", all_lines[prot_name_id])
+
+prot_id <- entrez_search(db = "protein", term = paste0(single_term, "[Accession]"))
+genomes_links <- entrez_link(dbfrom='protein', id=prot_id[["ids"]], db='nuccore')
+genomes <- entrez_fetch(db = "nuccore", id = genomes_links[["links"]][["protein_nuccore_wp"]], rettype = "gb", retmode = "text")
+
