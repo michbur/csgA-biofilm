@@ -1,0 +1,9 @@
+name points
+curlin 3
+major 5
+csga 5
+csgb -5
+minor -5
+nucleator -3
+hypothetical -3
+repeat 3
