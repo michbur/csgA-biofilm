@@ -39,3 +39,5 @@ prot_id <- entrez_search(db = "protein", term = paste0(single_term, "[Accession]
 genomes_links <- entrez_link(dbfrom='protein', id=prot_id[["ids"]], db='nuccore')
 genomes <- entrez_fetch(db = "nuccore", id = genomes_links[["links"]][["protein_nuccore_wp"]], rettype = "gb", retmode = "text")
 
+dir.create(single_term)
+cat(genomes, file = paste0("./", single_term, "/genomes.gbk"))
