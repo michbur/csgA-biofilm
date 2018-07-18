@@ -40,4 +40,8 @@ genomes_links <- entrez_link(dbfrom='protein', id=prot_id[["ids"]], db='nuccore'
 genomes <- entrez_fetch(db = "nuccore", id = genomes_links[["links"]][["protein_nuccore_wp"]], rettype = "gb", retmode = "text")
 
 dir.create(single_term)
-cat(genomes, file = paste0("./", single_term, "/genomes.gbk"))
+genomes_path <- paste0("./", single_term, "/genomes.gbk")
+cat(genomes, file = genomes_path)
+system(paste0("awk -v n=1 '/^$/{close(\"", "tmp/out\"n);n++;next} {print > \"out\"n}' ", genomes_path))
+system(paste0("awk -v n=1 '/^$/{close(\"out\"n);n++;next} {print > \"/home/michal/Dokumenty/gits/csgA-biofilm/tmp/out\"n}' ", genomes_path))
+       
