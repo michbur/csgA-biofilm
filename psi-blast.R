@@ -41,5 +41,6 @@ genomes <- entrez_fetch(db = "nuccore", id = genomes_links[["links"]][["protein_
 
 dir.create(single_term)
 genomes_path <- paste0("./", single_term, "/genomes.gbk")
-system(paste0("awk -v n=1 '/^$/{close(\"out\"n);n++;next} {print > \"", single_term,"/out\"n}' ", genomes_path))
-       
+system(paste0("awk -v n=1 '/^$/{close(\"out-genome\"n);n++;next} {print > \"", single_term,"/out-genome\"n}' ", genomes_path))
+
+single_genomes <- list.files(paste0("./", single_term), full.names = TRUE)
