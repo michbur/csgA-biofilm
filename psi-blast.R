@@ -3,7 +3,7 @@ library(rentrez)
 library(XML)
 
 if(Sys.info()[["nodename"]] == "amyloid")
-  seq_path <- "/home/michal/Dropbox/artykuły/PSI-blast/Bacteria (taxid:2)/csgA/iteracja_5"
+  seq_path <- "/home/michal/Dropbox/dropbox-amylogram/PSI-blast/Bacteria (taxid:2)/csgA/iteracja_5"
 
 
 all_lines <- readLines(paste0(seq_path, "/Sequences producing significant alignments with E-value BETTER than threshold.txt"))
