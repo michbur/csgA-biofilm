@@ -25,7 +25,15 @@ read_uniprot <- function (connection, ft_names, kwds = NULL)  {
                                                        "oc_end"]]
     attr(ith_seq, "OC") <- paste0(vapply(strsplit(oc, "OC   "), 
                                          function(single_oc) single_oc[2], "a"), collapse = " ")
-    browser()
+    
+    SP_pos <- if(length(fts[[1]][[i]]) > 0) {
+      as.numeric(strsplit(fts[[1]][[i]], "[ ]+")[[1]][4])
+    } else {
+      NA
+    }
+    
+    attr(ith_seq, "SP") <- SP_pos
+    
     ith_seq
   })
   

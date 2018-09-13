@@ -30,8 +30,8 @@ ecoli <- ecoli[lengths(ecoli) < 200 & lengths(ecoli) > 148]
 # PubMed:1357528 and PubMed:1677357 - signal ppetide 20 aa long
 
 library(seqinr)
-write.fasta(sapply(ecoli, function(i) i[21L:length(i)]), 
+write.fasta(sapply(ecoli, function(i) i[attr(i, "SP"):length(i)]), 
             names = names(ecoli), file.out = "ecoli_csga.fasta")
 
-salmonella <- csga[unname(sapply(csga, function(i) grepl("Salmonell", attr(i, "OS"))))]
+#salmonella <- csga[unname(sapply(csga, function(i) grepl("Salmonell", attr(i, "OS"))))]
 
