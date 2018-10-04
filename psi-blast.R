@@ -41,6 +41,42 @@ genomes <- entrez_fetch(db = "nuccore", id = genomes_links[["links"]][["protein_
 
 dir.create(single_term)
 genomes_path <- paste0("./", single_term, "/genomes.gbk")
+cat(genomes, file = genomes_path)
 system(paste0("awk -v n=1 '/^$/{close(\"out-genome\"n);n++;next} {print > \"", single_term,"/out-genome\"n}' ", genomes_path))
-
+file.remove(genomes_path)
 single_genomes <- list.files(paste0("./", single_term), full.names = TRUE)
+single_genome <- single_genomes[1]
+
+genome_lines <- readLines(single_genome)
+protein_line_id <- grep(single_term, genome_lines)
+
+# identify line defining the coordinates of CsgA cds
+cds_line_id <- protein_line_id
+
+while(!grepl("CDS", genome_lines[cds_line_id])) {
+  cds_line_id <- cds_line_id - 1
+}
+
+# convert start coordinate to numeric
+csgA_start <- strsplit(genome_lines[cds_line_id], split = "..", fixed = TRUE)[[1]][[1]] %>% 
+  gsub(pattern = "[^0-9]", replacement = "") %>% 
+  as.numeric
+
+all_cds_id <- grep("     CDS             ", genome_lines)
+
+all_cds_start <- genome_lines[all_cds_id] %>% 
+  gsub(pattern = "[^0-9\\.]", replacement = "") %>% 
+  strsplit(split = "..", fixed = TRUE) %>% 
+  sapply(first) %>% 
+  as.numeric
+
+# choose only CDSs that start at least 5000 bp before CsgA
+# and at most 7000 bp after CsgA
+line_id_df <- data.frame(start = all_cds_start, line_id = all_cds_id) %>% 
+  filter(start > (csgA_start - 5000) & start < (csgA_start + 7000))
+
+# CDS of the interest - near CsgA
+coi <- genome_lines[min(line_id_df[["line_id"]]):max(line_id_df[["line_id"]])]
+
+
+
