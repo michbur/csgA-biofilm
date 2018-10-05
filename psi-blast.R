@@ -32,11 +32,17 @@ all_points <- lapply(1L:nrow(description_points), function(ith_description_name_
   sort(decreasing = TRUE)
 
 #grep("WP_010429577.1", all_lines[prot_name_id])
-res <- pblapply(names(which(all_points > 5)), function(single_term) {
-  prot_id <- entrez_search(db = "protein", term = paste0(single_term, "[Accession]"), config = httr::config(http_version = 2))
+res <- lapply(names(which(all_points > 5))[1L:5], function(single_term) try({
+  print(single_term)
+  #WP_003858043.1
+  prot_id <- entrez_search(db = "protein", term = paste0(single_term, "[Accession]"), 
+                           config = httr::config(http_version = 2))
   genomes_links <- entrez_link(dbfrom='protein', id=prot_id[["ids"]], db = "nuccore", config = httr::config(http_version = 2))
-  genomes <- entrez_fetch(db = "nuccore", id = genomes_links[["links"]][["protein_nuccore_wp"]], rettype = "gb", 
-                          retmode = "text", config = httr::config(http_version = 2))
+  
+  genomes <- lapply(genomes_links[["links"]][["protein_nuccore_wp"]], function(ith_id)
+                    entrez_fetch(db = "nuccore", id = ith_id, rettype = "gb", 
+                          retmode = "text", config = httr::config(http_version = 2))) %>% 
+    unlist
   
   dir.create(single_term)
   genomes_path <- paste0("./", single_term, "/genomes.gbk")
@@ -130,6 +136,6 @@ res <- pblapply(names(which(all_points > 5)), function(single_term) {
   unlink(single_term, recursive = TRUE)
   
   genome_proteins
-}) 
+}, silent = TRUE)) 
 
 save(res, file = "/home/michal/Dropbox/dropbox-amylogram/PSI-blast/NCBI-Csg.RData")
