@@ -32,8 +32,7 @@ all_points <- lapply(1L:nrow(description_points), function(ith_description_name_
   sort(decreasing = TRUE)
 
 #grep("WP_010429577.1", all_lines[prot_name_id])
-res <- lapply(names(which(all_points > 5))[1L:5], function(single_term) try({
-  print(single_term)
+res <- pblapply(names(which(all_points > 5)), function(single_term) try({
   #WP_003858043.1
   prot_id <- entrez_search(db = "protein", term = paste0(single_term, "[Accession]"), 
                            config = httr::config(http_version = 2))
