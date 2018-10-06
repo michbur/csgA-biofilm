@@ -39,8 +39,8 @@ res <- pblapply(names(which(all_points > 5)), function(single_term) try({
   genomes_links <- entrez_link(dbfrom='protein', id=prot_id[["ids"]], db = "nuccore", config = httr::config(http_version = 2))
   
   genomes <- lapply(genomes_links[["links"]][["protein_nuccore_wp"]], function(ith_id)
-                    entrez_fetch(db = "nuccore", id = ith_id, rettype = "gb", 
-                          retmode = "text", config = httr::config(http_version = 2))) %>% 
+    entrez_fetch(db = "nuccore", id = ith_id, rettype = "gb", 
+                 retmode = "text", config = httr::config(http_version = 2))) %>% 
     unlist
   
   dir.create(single_term)
@@ -138,3 +138,24 @@ res <- pblapply(names(which(all_points > 5)), function(single_term) try({
 }, silent = TRUE)) 
 
 save(res, file = "/home/michal/Dropbox/dropbox-amylogram/PSI-blast/NCBI-Csg.RData")
+
+only_BAC <- lapply(res, function(single_protein) 
+  lapply(single_protein, function(single_genome) {
+    proper_reads <- single_genome[sapply(single_genome, class) == "list"]
+    CsgA_id <- grep("CsgA", sapply(proper_reads, function(i) i[["name"]]))
+    if(length(CsgA_id) == 0) {
+      NULL
+    } else {
+      proper_reads[(CsgA_id - 1):(CsgA_id + 1)]
+    }
+  })
+)
+
+lapply(only_BAC, function(single_protein) {
+  lapply(single_protein, function(single_genome) {
+    print(single_genome[[1]][["definition"]])
+    data.frame(definition = single_genome[[1]][["definition"]],
+               name = sapply(single_genome, getElement, name = "name"),
+               seq = sapply(single_genome, function(i) paste0(i[["seq"]], collapse = "")))
+  }) 
+}) 
