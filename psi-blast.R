@@ -138,8 +138,13 @@ res <- pblapply(names(which(all_points > 5)), function(single_term) try({
 }, silent = TRUE)) 
 
 save(res, file = "/home/michal/Dropbox/dropbox-amylogram/PSI-blast/NCBI-Csg.RData")
+load("/home/michal/Dropbox/dropbox-amylogram/PSI-blast/NCBI-csgBAC.RData")
 
-only_BAC <- lapply(res, function(single_protein) 
+no_erorrs <- res[sapply(res, class) != "try-error"]
+
+non_empty <- no_erorrs[lengths(no_erorrs) != 0]
+
+only_BAC <- lapply(non_empty, function(single_protein) 
   lapply(single_protein, function(single_genome) {
     proper_reads <- single_genome[sapply(single_genome, class) == "list"]
     CsgA_id <- grep("CsgA", sapply(proper_reads, function(i) i[["name"]]))
@@ -149,13 +154,49 @@ only_BAC <- lapply(res, function(single_protein)
       proper_reads[(CsgA_id - 1):(CsgA_id + 1)]
     }
   })
-)
+) %>% 
+  unlist(recursive = FALSE) %>% 
+  unlist(recursive = FALSE)
 
-lapply(only_BAC, function(single_protein) {
-  lapply(single_protein, function(single_genome) {
-    print(single_genome[[1]][["definition"]])
-    data.frame(definition = single_genome[[1]][["definition"]],
-               name = sapply(single_genome, getElement, name = "name"),
-               seq = sapply(single_genome, function(i) paste0(i[["seq"]], collapse = "")))
-  }) 
-}) 
+
+only_proper_BAC <- only_BAC[!sapply(only_BAC, is.null)]
+
+BAC_df <- lapply(only_proper_BAC, function(single_protein) {
+  data.frame(definition = single_protein[["definition"]],
+             name = single_protein[["name"]],
+             id = single_protein[["id"]],
+             seq = paste0(single_protein[["seq"]], collapse = ""), 
+             stringsAsFactors = FALSE)
+}) %>% 
+  bind_rows() %>% 
+  mutate(definition = sub(pattern = ", whole genome shotgun sequence.", "", definition)) %>% 
+  filter(name %in% c("curlin associated precursor, CsgA like", 
+                     "minor curlin subunit, nucleator CsgB", "aggregative fimbriae synthesis protein", 
+                     "major curlin subunit CsgA domain protein", "curlin", "minor curlin subunit CsgB", 
+                     "curlin subunit CsgB", 
+                     "curlin associated precursor, CsgA like protein", 
+                     "curlin minor subunit CsgB", "minor curlin subunit", "curli assembly protein CsgC", 
+                     "major curlin subunit CsgA")) %>% 
+  group_by(definition) %>% 
+  mutate(n_prots = length(definition)) %>% 
+  filter(n_prots == 3) %>% 
+  mutate(unified_name = ifelse(grepl("CsgC", name), "CsgC", name),
+         unified_name = ifelse(grepl("aggregative fimbria", name), "CsgC", unified_name),
+         unified_name = ifelse(grepl("CsgB", name), "CsgB", unified_name),
+         unified_name = ifelse(grepl("minor", name), "CsgB", unified_name),
+         unified_name = ifelse(grepl("^curlin$", name), "CsgB", unified_name),
+         unified_name = ifelse(grepl("CsgA", name), "CsgA", unified_name),
+         unified_name = ifelse(grepl("major", name), "CsgA", unified_name))
+
+library(seqinr)
+write.fasta(sequences = strsplit(filter(BAC_df, unified_name == "CsgC")[["seq"]], ""), 
+            names = filter(BAC_df, unified_name == "CsgC")[["definition"]],
+            file = "/home/michal/Dropbox/dropbox-amylogram/PSI-blast/CsgC.fasta")
+
+write.fasta(sequences = strsplit(filter(BAC_df, unified_name == "CsgB")[["seq"]], ""), 
+            names = filter(BAC_df, unified_name == "CsgB")[["definition"]],
+            file =  "/home/michal/Dropbox/dropbox-amylogram/PSI-blast/CsgB.fasta")
+
+write.fasta(sequences = strsplit(filter(BAC_df, unified_name == "CsgA")[["seq"]], ""), 
+            names = filter(BAC_df, unified_name == "CsgA")[["definition"]],
+            file =  "/home/michal/Dropbox/dropbox-amylogram/PSI-blast/CsgA.fasta")
