@@ -1,0 +1,13 @@
+   |+                                                 | 1 % ~02h 47m 59s  Error : HTTP failure: 400
+ Error: CEFetchPApplication::proxy_stream(): Failed to retrieve sequence: 1348994338
+
+
+   |++++++++++++++++                                  | 31% ~03h 26m 53s  Error : HTTP failure: 400
+ Error: CEFetchPApplication::proxy_stream(): Failed to retrieve sequence: 1348963866
+
+
+   |++++++++++++++++++++++++++++++                    | 60% ~01h 42m 52s  Error : Vector of IDs to send to NCBI is empty, perhaps entrez_search or entrez_link found no hits?
+   |+++++++++++++++++++++++++++++++++                 | 66% ~03h 02m 13s  Error : HTTP failure: 400
+{"error":"error while forwarding to eutils","api-key":"156.17.99.191","type":"ip","status":"ok"}
+   |+++++++++++++++++++++++++++++++++++++             | 73% ~03h 21m 19s  Error : Vector of IDs to send to NCBI is empty, perhaps entrez_search or entrez_link found no hits?
+   |++++++++++++++++++++++++++++++++++++++++++++++++++| 100% elapsed = 09h 01m 42s
