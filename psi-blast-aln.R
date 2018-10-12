@@ -17,23 +17,29 @@ alph_color_list <- list(list(col = "#8dd3c7", aa = c("G", "A", "S", "T")),
                         list(col = "#80b1d3", aa = c("K", "R")),
                         list(col = "white", aa = c("-")))
 
-
-all_lines <- readLines("/home/michal/Dropbox/dropbox-amylogram/PSI-blast/CsgA_muscle.fas")
-
+# read all lines from alignment
+# all_lines <- readLines("/home/michal/Dropbox/dropbox-amylogram/PSI-blast/CsgA_muscle.fas")
 all_lines <- readLines("/home/jarek/Dropbox/amyloids/PSI-blast/CsgA_muscle.fas")
 
+# find protein ids
 prot_id <- cumsum(grepl("^>", all_lines))
 
+# split into separate proteins and their sequence
 all_prots <- split(all_lines, prot_id)
 
+# split sequence into separate aa
 aln_dat <- lapply(all_prots, function(ith_prot) {
   strsplit(paste0(ith_prot[-1], collapse = ""), "")[[1]]
 }) %>% 
   do.call(rbind, .)
 
+# find positions of aa
 real_positions <- cumsum(aln_dat[1, ] != "-")
 
+# all protein names
 all_names <- sapply(all_prots, function(ith_prot) ith_prot[[1]])
+
+# show selected regions
 aln_dat[, real_positions %in% region_borders[[1]]]
 
 
@@ -45,23 +51,7 @@ library(AmyloGram)
 AmyloGram_model[["enc"]]
 # use with make_col_scheme
 
-am <- AmyloGram_model[["enc"]]
-cs2 = make_col_scheme(chars=c("G", 
-                              "K", "P", "R", 
-                              "I", "L", "V", 
-                              "F", "W", "Y", 
-                              "A", "C", "H", "M", 
-                              "D", "E", "N", "Q", "S", "T")), 
-                      groups = c("gr1", "gr2", "gr3", "gr4", "gr5", "gr6")
-
-# Generate sequence logo
-ggseqlogo(seqs_dna$MA0001.1, col_scheme=cs2)
-
-
-
-
-
-# functions - csgA(region) CsgA(1)
+# functions - csgA(region) ex.CsgA(1)
 
 csgA <- function(x){
 region_borders <- list(R1 = 43L:65, 
@@ -92,7 +82,7 @@ ggplot() + geom_logo( apply(aln_dat[, real_positions %in% region_borders[[x]]], 
 }
 
 
-
+# functions - csgB(region) ex.CsgA(1)
 csgB <- function(x){
   region_borders <- list(R1 = 45L:66, 
                          R2 = 67L:88,
