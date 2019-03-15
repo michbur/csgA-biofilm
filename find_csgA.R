@@ -25,12 +25,11 @@ find_sequence <- function(pattern, seqs, max.mismatch = 60) {
   })
 }
 
+
 csga_seqs <- find_sequence(seq_k12_csga[[1]], seqs)
 csgb_seqs <- find_sequence(seq_k12_csgb[[1]], seqs)
 
 
-biogram::write_fasta(csga_seqs[1], "proba.fasta")
+biogram::write_fasta(lapply(csga_seqs, function(i) i[["prot"]]), file = "CsgA.fasta")
 
-biogram::write_fasta(csga_seqs[[1]]["prot"], "proba.fasta")
-
-
+biogram::write_fasta(lapply(csgb_seqs, function(i) i[["prot"]]), file = "CsgB.fasta")
