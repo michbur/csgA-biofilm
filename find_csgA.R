@@ -25,3 +25,6 @@ find_sequence <- function(pattern, seqs, max.mismatch = 60) {
 }
 
 csga_seqs <- find_sequence(seq_k12[[1]], seqs)
+
+biogram::write_fasta(lapply(csga_seqs, function(i) i[["prot"]]), file = "CsgA.fasta"))
+  
