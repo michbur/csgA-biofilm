@@ -2,8 +2,9 @@ library(biogram)
 library(seqinr)
 library(dplyr)
 
-seqs <- read_fasta("/home/michal/Dropbox/dropbox-amylogram/E. coli biofilm screen/Sequences/csg/csg_all.fasta")
-seq_k12 <- read_fasta("data/CsgA-K12-gene.fasta")
+seqs <- read_fasta("data/csg_all.fasta")
+seq_k12_csga <- read_fasta("data/CsgA-K12-gene.fasta")
+seq_k12_csgb <- read_fasta("data/CsgB-K12-gene.fasta")
 
 find_sequence <- function(pattern, seqs, max.mismatch = 60) {
   seq2bio <- function(x)
@@ -24,4 +25,12 @@ find_sequence <- function(pattern, seqs, max.mismatch = 60) {
   })
 }
 
-csga_seqs <- find_sequence(seq_k12[[1]], seqs)
+csga_seqs <- find_sequence(seq_k12_csga[[1]], seqs)
+csgb_seqs <- find_sequence(seq_k12_csgb[[1]], seqs)
+
+
+biogram::write_fasta(csga_seqs[1], "proba.fasta")
+
+biogram::write_fasta(csga_seqs[[1]]["prot"], "proba.fasta")
+
+
