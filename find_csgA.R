@@ -40,7 +40,7 @@ csgf_seqs <- find_sequence(seq_k12_csgf[[1]], seqs)
 csgg_seqs <- find_sequence(seq_k12_csgg[[1]], seqs)
 
 
-biogram::write_fasta(lapply(csga_seqs, function(i) i[["prot"]]), file = "data/CsgA_prot.fasta")
+biogram::write_fasta(lapply(csga_seqs, function(i) i[["prot"]][i[["prot"]] != "*"]), file = "data/CsgA_prot.fasta")
 biogram::write_fasta(lapply(csgb_seqs, function(i) i[["prot"]]), file = "data/CsgB_prot.fasta")
 biogram::write_fasta(lapply(csgc_seqs, function(i) i[["prot"]]), file = "data/CsgC_prot.fasta")
 biogram::write_fasta(lapply(csgd_seqs, function(i) i[["prot"]]), file = "data/CsgD_prot.fasta")
