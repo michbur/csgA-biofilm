@@ -40,7 +40,7 @@ csgf_seqs <- find_sequence(seq_k12_csgf[[1]], seqs)
 csgg_seqs <- find_sequence(seq_k12_csgg[[1]], seqs)
 
 
-biogram::write_fasta(lapply(csga_seqs, function(i) i[["prot"]][i[["prot"]] != "*"]), file = "data/CsgA_prot.fasta")
+biogram::write_fasta(lapply(csga_seqs, function(i) i[["prot"]][i[["prot"]] != "*"]), file = "results/CsgA_prot.fasta")
 biogram::write_fasta(lapply(csgb_seqs, function(i) i[["prot"]]), file = "data/CsgB_prot.fasta")
 biogram::write_fasta(lapply(csgc_seqs, function(i) i[["prot"]]), file = "data/CsgC_prot.fasta")
 biogram::write_fasta(lapply(csgd_seqs, function(i) i[["prot"]]), file = "data/CsgD_prot.fasta")
@@ -55,3 +55,16 @@ biogram::write_fasta(lapply(csgd_seqs, function(i) i[["nuc"]]), file = "data/Csg
 biogram::write_fasta(lapply(csge_seqs, function(i) i[["nuc"]]), file = "data/CsgE_nuc.fasta")
 biogram::write_fasta(lapply(csgf_seqs, function(i) i[["nuc"]]), file = "data/CsgF_nuc.fasta")
 biogram::write_fasta(lapply(csgg_seqs, function(i) i[["nuc"]]), file = "data/CsgG_nuc.fasta")
+
+
+csgd <- biogram::read_fasta("results/CsgD_nuc.fasta")
+
+csgd_full <- lapply(names(csgd), function(i){
+  seq_nuc <- csgd[[i]]
+  seq_prot <- seqinr::translate(seq_nuc)
+  list(nuc = seq_nuc,
+       prot = seq_prot)
+})
+
+biogram::write_fasta(lapply(csgd_full, function(i) i[["prot"]]), file = "results/CsgD_prot.fasta")
+
