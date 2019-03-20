@@ -57,14 +57,24 @@ biogram::write_fasta(lapply(csgf_seqs, function(i) i[["nuc"]]), file = "data/Csg
 biogram::write_fasta(lapply(csgg_seqs, function(i) i[["nuc"]]), file = "data/CsgG_nuc.fasta")
 
 
-csgd <- biogram::read_fasta("results/CsgD_nuc.fasta")
 
-csgd_full <- lapply(names(csgd), function(i){
-  seq_nuc <- csgd[[i]]
-  seq_prot <- seqinr::translate(seq_nuc)
+for_complementary <- function(sequence){        #sequence == "results/CsgD_nuc.fasta"
+csgX <- biogram::read_fasta(sequence)
+
+csgX_full <- lapply(names(csgX), function(i){
+  seq_nuc <- seqinr::comp(csgX[[i]][length(csgX[[i]]):1])
+  seq_prot <- seqinr::translate(seq_nuc, numcode = 11)
   list(nuc = seq_nuc,
        prot = seq_prot)
 })
 
-biogram::write_fasta(lapply(csgd_full, function(i) i[["prot"]]), file = "results/CsgD_prot.fasta")
+names(csgX_full) <- names(csgX)
 
+csg_file_name <- gsub("nuc", "prot", sequence)
+browser()
+biogram::write_fasta(lapply(csgX_full, function(i) i[["prot"]][i[["prot"]] != "*"]), file = csg_file_name)
+}
+
+
+for_complementary("results/CsgG_nuc.fasta")
+for_complementary("results/CsgD_nuc.fasta")
