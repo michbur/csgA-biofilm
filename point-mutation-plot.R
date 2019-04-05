@@ -36,4 +36,5 @@ lapply(diff_pos, function(ith_row)
   scale_y_continuous("Frequency") +
   scale_fill_manual("Amyloid-specific region", values = c("#d8b365", "#5ab4ac")) +
   facet_wrap(~ pos, scales = "free_x", nrow = 3) +
-  theme_bw() 
+  theme_bw() +
+  theme(legend.position = "bottom")
